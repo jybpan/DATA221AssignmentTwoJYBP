@@ -3,24 +3,27 @@ import string
 file = open("sample-file.txt", "r")
 
 tokenList = []
-uniqueTokenList = []
 tokenDictionary = {}
-keySortedTokenDictionary = {}
 
+# Makes a translation table, deletes any string containing the basic ascii punctuation characters
+# ' ' is simply to make sure that nothing else is deleted from the stirng, only punctuation
 punctuationCuller = str.maketrans('', '', string.punctuation)
 
 with file:
     for line in file: 
-        for word in line.split(): # "Python is so readable bro!" The 4 indents in question:
+        for word in line.split():
             cleanWord = word.lower()
             cleanWord = cleanWord.translate(punctuationCuller)
 
             if len(cleanWord) >= 2:
                 tokenList.append(cleanWord)
 
+# Finds the counts/frequency of each word, counts how many times a certain string
+# appears within tokenList. Uses a set to count each word once, as sets only allow unique strings/tokens.
 tokenDictionary = {words: tokenList.count(words) for words in set(tokenList)}
 
-for key in sorted(tokenDictionary, key=tokenDictionary.get):
-    keySortedTokenDictionary[key] = tokenDictionary[key]
+# Creates a sorted by descending order tuple, and then slicing it so it only has the first 10 elements.
+mostFrequentTokens = sorted(tokenDictionary.items(), key=lambda keyValuePair: keyValuePair[1], reverse=True)[:10]
 
-print(keySortedTokenDictionary)
+for key, value in mostFrequentTokens:
+    print(key, "->", value, end=", ")

@@ -1,9 +1,11 @@
 import string
+import pandas as pd
 
 file = open("sample-file.txt", "r")
 
 tokenList = []
 bigramList = []
+bigramsAndFrequency = {}
 
 punctuationCuller = str.maketrans('', '', string.punctuation)
 
@@ -16,13 +18,15 @@ with file:
             if len(cleanWord) >= 2:
                 tokenList.append(cleanWord)
 
-tokenListLength = range(len(tokenList))
-print(tokenListLength)
+tokenListLength = len(tokenList)
+tokenListRange = range(tokenListLength)
 
-for indexOne in tokenListLength:
-    for indexTwo in tokenListLength:
-        if indexOne <= tokenListLength-1:
-            print(indexOne, indexTwo)
-            bigramList.append(tokenList[indexOne], " ", tokenList[indexTwo])
+for index in tokenListRange:
+    nextIndex = index+1
+    if nextIndex <= len(tokenList)-1:
+        bigramList.append((f"{tokenList[index]} {tokenList[nextIndex]}"))
 
-print(bigramList)
+bigramsAndFrequency = pd.Series(bigramList).value_counts().head(5)
+
+for word, frequency in bigramsAndFrequency.items():
+    print(f"{word} -> {frequency}", end=" ")

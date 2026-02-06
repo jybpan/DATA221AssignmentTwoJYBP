@@ -1,4 +1,5 @@
 import string
+import pandas as pd
 
 file = open("sample-file.txt", "r")
 
@@ -18,12 +19,7 @@ with file:
             if len(cleanWord) >= 2:
                 tokenList.append(cleanWord)
 
-# Finds the counts/frequency of each word, counts how many times a certain string
-# appears within tokenList. Uses a set to count each word once, as sets only allow unique strings/tokens.
-tokenDictionary = {words: tokenList.count(words) for words in set(tokenList)}
+tokenListAndFrequency = pd.Series(tokenList).value_counts().head(10)
 
-# Creates a sorted by descending order tuple, and then slicing it so it only has the first 10 elements.
-mostFrequentTokens = sorted(tokenDictionary.items(), key=lambda keyValuePair: keyValuePair[1], reverse=True)[:10]
-
-for key, value in mostFrequentTokens:
-    print(key, "->", value, end=", ")
+for word, frequency in tokenListAndFrequency.items():
+    print(f"{word} -> {frequency}",end=" ")

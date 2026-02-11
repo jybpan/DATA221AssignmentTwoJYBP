@@ -1,27 +1,46 @@
 import string
-import pandas as pd
 
-file = open("sample-file.txt", "r")
+def sentenceNormalizer(sentence):
+    punctuationCuller = str.maketrans("", "", string.punctuation)
+    sentenceNormalized = sentence.translate(punctuationCuller).lower()
 
-sentenceList = []
-sentenceNormalizedList = {}
-sentenceDictionaryMapping = {} #Maps sentences to their normalized sentence form
+    noWhitespaceSentence = ""
+    for character in sentenceNormalized:
+        if not character.isspace():
+            noWhitespaceSentence += character
 
-punctuationCuller = str.maketrans(' ', ' ', string.punctuation)
+    sentenceNormalized = noWhitespaceSentence
 
-def sentenceNormalizer(sentence, punctuationCuller):
-    sentenceNormalized = sentence.translate(punctuationCuller)
-    sentenceNormalized = sentence.lower()
-    sentenceNormalized = sentence.replace('\n', '')
-    sentenceNormalized = sentence.replace(' ', '')
-    print(f"EDITED LINE: {sentenceNormalized}")
     return sentenceNormalized
 
+sentenceList = []
+file = open("sample-file.txt", "r")
+for line in file:
+    sentenceList.append(line.rstrip("\n"))
+file.close()
 
-with file:
-    for line in file:
-        print("NEW LINE: ", line)
-        normalizedSentence = sentenceNormalizer(line, punctuationCuller)
-        sentenceDictionaryMapping[line] = normalizedSentence
+normalizedSentenceGroups = {}
 
-print(sentenceDictionaryMapping.values())
+for lineNumber, line in enumerate(sentenceList, start=1):
+    if line.strip() == "":
+        continue
+
+    normalizedSentence = sentenceNormalizer(line)
+
+    if normalizedSentence not in normalizedSentenceGroups:
+        normalizedSentenceGroups[normalizedSentence] = []
+
+    normalizedSentenceGroups[normalizedSentence].append((lineNumber, line))
+
+nearDuplicateSets = []
+
+for group in normalizedSentenceGroups.values():
+    if len(group) >= 2:
+        nearDuplicateSets.append(group)
+
+print(len(nearDuplicateSets))
+
+for index, sentenceGrouping in enumerate(nearDuplicateSets[:2], start=1):
+    print(f"\nSet {index}:")
+    for lineNumber, text in sentenceGrouping:
+        print(f"{lineNumber}: {text}")

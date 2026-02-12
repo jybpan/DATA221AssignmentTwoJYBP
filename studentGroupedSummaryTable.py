@@ -23,7 +23,7 @@ summaryTable = (
     .agg(
         numberOfStudents=("grade", "count"),
         averageAbsences=("absences", "mean"),
-        percentWithInternet=("internet", lambda x: (x == "yes").mean() * 100) # Neat trick found using GPT-5.2
+        percentWithInternet=("internet", lambda x: (x == "yes").mean() * 100) # Neat function formatting trick found using GPT-5.2
     )
     .reset_index()
 )
